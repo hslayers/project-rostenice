@@ -35,7 +35,7 @@
                       <a class="dropdown-item" href="#" ng-click="getCrossings('meteogram_agroSpraying', 'Spray window')">Spray window</a>
                     </div>
                 </div>
-                <button class="btn btn-secondary btn-block" translate ng-click="play()">Play animation</button>
+                <button class="btn btn-secondary btn-block" translate ng-click="play()">{{service.isPlaying ? 'Stop animation' : 'Play animation'}}</button>
                 <button class="btn btn-danger btn-block" translate ng-click="clear()"> Clear</button>
 		    </ul>
         </div>

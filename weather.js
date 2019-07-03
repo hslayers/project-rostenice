@@ -41,7 +41,7 @@ angular.module('hs.weather', ['hs.core', 'hs.map'])
                         var params = Object.keys(data).map(function (k) {
                             return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
                         }).join('&');
-                        var url = utils.proxify(`http://my.meteoblue.com/visimage/${service}?${params}`);
+                        var url = utils.proxify(`http://my.meteoblue.com/visimage/${service}?${params}`, false);
                         var img = new Image();
                         img.onload = (function (point, ent) {
                             return function () {
@@ -88,25 +88,33 @@ angular.module('hs.weather', ['hs.core', 'hs.map'])
                 },
                 playInterpolated() {
                     var viewer = me.viewer;
+                    me.isPlaying = true;
                     //Set bounds of our simulation time
 
                     function flyNext() {
+                        var point = me.points[me.currentPoint];
+                        var entity = point.entity;
+                        viewer.trackedEntity = entity;
                         viewer.camera.flyTo({
-                            destination: Cesium.Cartesian3.fromDegrees(me.points[me.currentPoint].lon, me.points[me.currentPoint].lat - 0.005, 500.0),
+                            destination: Cesium.Cartesian3.fromDegrees(point.lon, point.lat - 0.008, 1020.0),
                             orientation: {
-                                heading: Cesium.Math.toRadians(0.0),
-                                pitch: Cesium.Math.toRadians(-35.0),
+                                heading: Cesium.Math.toRadians(0),
+                                pitch: Cesium.Math.toRadians(-40.0),
                                 roll: 0.0
                             },
                             duration: 5,
                             complete: function () { 
                                 me.currentPoint = (me.currentPoint + 1) % me.points.length;
-                                console.log(me.currentPoint);
-                                setTimeout(flyNext, 4000) }
+                                me.animationTimer = setTimeout(flyNext, 10000) }
                         });
                     }
                     me.currentPoint = 0;
                     flyNext();
+                },
+
+                stopPlaying(){
+                    clearTimeout(me.animationTimer);
+                    me.isPlaying = false;
                 },
 
                 createLayer() {
@@ -169,6 +177,7 @@ angular.module('hs.weather', ['hs.core', 'hs.map'])
             service.points = [];
             $scope.loading = false;
             $scope.points = service.points;
+            $scope.service = service;
             $scope.$on('cesium_position_clicked', function (event, data) {
                 var point = {
                     lon: data[0].toFixed(2),
@@ -228,10 +237,20 @@ angular.module('hs.weather', ['hs.core', 'hs.map'])
 
             $scope.$on('cesiummap.loaded', function (event, viewer, hsCesium) {
                 service.viewer = viewer;
+                /*setInterval(function(){
+                    var pos = Cesium.Cartographic.fromCartesian(viewer.camera.position);
+                    var lastEnt = service.entities[service.entities.length-1];
+                    var lastEntPos = Cesium.Cartographic.fromCartesian(lastEnt.position._value);
+                    //console.log('Ent pos ' + Cesium.Math.toDegrees(lastEntPos.longitude) + ' ' + Cesium.Math.toDegrees(lastEntPos.latitude))
+                    console.log('Cam pos ' + Cesium.Math.toDegrees(pos.longitude) + ' ' + Cesium.Math.toDegrees(pos.latitude) , 'pitch ' + Cesium.Math.toDegrees(viewer.camera.pitch), 'heading' + Cesium.Math.toDegrees(viewer.camera.heading));
+                }, 1000);*/
             });
 
             $scope.play = function () {
-                service.playInterpolated();
+                if(service.isPlaying)
+                    service.stopPlaying();
+                else
+                    service.playInterpolated();
             }
 
             $scope.$emit('scope_loaded', "weather");
