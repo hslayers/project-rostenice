@@ -17,6 +17,7 @@ import { ImageWMS, ImageArcGISRest } from 'ol/source';
 import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
+import weather from 'weather';
 
 var module = angular.module('hs', [
     'hs.toolbar',
@@ -27,7 +28,8 @@ var module = angular.module('hs', [
     'hs.geolocation',
     'hs.cesium',
     'hs.sidebar',
-    'hs.addLayers'
+    'hs.addLayers',
+    'hs.weather'
 ]);
 
 module.directive('hs', ['hs.map.service', 'Core', '$compile', '$timeout', function (OlMap, Core, $compile, $timeout) {
@@ -52,6 +54,16 @@ module.directive('hs.aboutproject', function () {
     };
 });
 
+module.directive('hs.infoDirective', function () {
+    return {
+        template: require('./info.html'),
+        link: function (scope, element, attrs) {
+            scope.infoModalVisible = true;
+            scope.image = attrs.image;
+        }
+    };
+});
+
 function getHostname() {
     var url = window.location.href
     var urlArr = url.split("/");
@@ -61,6 +73,7 @@ function getHostname() {
 
 module.value('config', {
     cesiumBase: './node_modules/cesium/Build/Cesium/',
+    cesiumTimeline: true,
     cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzZDk3ZmM0Mi01ZGFjLTRmYjQtYmFkNC02NTUwOTFhZjNlZjMiLCJpZCI6MTE2MSwiaWF0IjoxNTI3MTYxOTc5fQ.tOVBzBJjR3mwO3osvDVB_RwxyLX7W-emymTOkfz6yGA',
     newTerrainProviderOptions: {
         url: 'http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/'
@@ -242,17 +255,20 @@ module.value('config', {
         center: transform([16.8290202, 49.0751890], 'EPSG:4326', 'EPSG:3857'), //Latitude longitude    to Spherical Mercator
         zoom: 15,
         units: "m"
-    })
+    }),
+    cesiumdDebugShowFramesPerSecond: true
 });
 
-module.controller('Main', ['$scope', '$compile', '$element', 'Core', 'hs.map.service', 'config',
-    function ($scope, $compile, $element, Core, OlMap, config) {
+module.controller('Main', ['$scope', '$compile', '$element', 'Core', 'hs.map.service', 'config', 'hs.weather.service',
+    function ($scope, $compile, $element, Core, OlMap, config, weather_service) {
         $scope.hsl_path = hsl_path; //Get this from hslayers.js file
         $scope.Core = Core;
 
         Core.singleDatasources = true;
         Core.panelEnabled('compositions', true);
         Core.panelEnabled('status_creator', false);
+
+        config.default_layers.push(weather_service.createLayer());
 
         $scope.$on('infopanel.updated', function (event) { });
 
@@ -261,5 +277,17 @@ module.controller('Main', ['$scope', '$compile', '$element', 'Core', 'hs.map.ser
             document.getElementById("hs-dialog-area").appendChild(el[0]);
             $compile(el)($scope);
         }
+
+        $scope.$on("scope_loaded", function (event, args) {
+            if (args == 'Sidebar') {
+                var el = angular.element('<div hs.weather.directive hs.draggable ng-controller="hs.weather.controller" ng-if="Core.exists(\'hs.weather.controller\')" ng-show="Core.panelVisible(\'weather\', this)"></div>')[0];
+                document.querySelector('#panelplace').appendChild(el);
+                $compile(el)($scope);
+
+                var toolbar_button = angular.element('<div hs.weather.toolbar></div>')[0];
+                document.querySelector('.sidebar-list').appendChild(toolbar_button);
+                $compile(toolbar_button)(event.targetScope);
+            }
+        })
     }
 ]);
