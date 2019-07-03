@@ -20,7 +20,7 @@
   "dependencies": {
     "acorn": "^6.1.1",
     "cesium": ">=1.53.0",
-    "hslayers-ng": "^1.1.1",
+    "hslayers-ng": "^1.1.2",
     "jquery": "^3.3.1"
   },
   "devDependencies": {
