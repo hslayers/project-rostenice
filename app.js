@@ -1,14 +1,14 @@
 'use strict';
-import toolbar from 'toolbar';
-import print from 'print';
-import query from 'query';
-import search from 'search';
-import measure from 'measure';
-import permalink from 'permalink';
-import 'hscesium';
-import info from 'info';
-import ds from 'datasource_selector';
-import sidebar from 'sidebar';
+import toolbar from 'toolbar.module';
+import print from 'print.module';
+import query from 'query.module';
+import search from 'search.module';
+import measure from 'measure.module';
+import permalink from 'permalink.module';
+import 'hscesium.module';
+import info from 'info.module';
+import ds from 'datasource-selector.module';
+import sidebar from 'sidebar.module';
 import 'add-layers.module';
 import bootstrapBundle from 'bootstrap/dist/js/bootstrap.bundle';
 import { Tile, Group } from 'ol/layer';
@@ -260,7 +260,6 @@ module.value('config', {
 
 module.controller('Main', ['$scope', '$compile', '$element', 'Core', 'hs.map.service', 'config', 'hs.weather.service',
     function ($scope, $compile, $element, Core, OlMap, config, weather_service) {
-        $scope.hsl_path = hsl_path; //Get this from hslayers.js file
         $scope.Core = Core;
 
         Core.singleDatasources = true;

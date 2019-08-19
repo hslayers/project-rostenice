@@ -1,4 +1,4 @@
-import map from 'map';
+import map from 'map.module';
 import core from 'core';
 import VectorLayer from 'ol/layer/Vector';
 import { Vector } from 'ol/source';
