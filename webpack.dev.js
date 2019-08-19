@@ -41,20 +41,14 @@ module.exports = merge(common, {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
-        include: [path.resolve(__dirname), 
-          path.join(__dirname, './node_modules'),
-          path.join(__dirname, './node_modules/hslayers-ng')
-        ]
       },
       {
         test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
-        include: [path.join(__dirname), path.join(__dirname, './node_modules/hslayers-ng')],
         use: ['url-loader']
       },
       // Load angularJS partials HTML file as URL
       {
         test: /\.html$/,
-        include: [path.join(__dirname), path.join(__dirname, './node_modules/hslayers-ng')],
         exclude: path.resolve(__dirname, 'src/index.html'),
         use: [
           'ng-cache-loader?prefix=[dir]/[dir]',
