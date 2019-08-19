@@ -84,17 +84,9 @@ module.exports = merge(common, {
           },
           'css-loader'
         ],
-        include: [path.resolve(__dirname), 
-          path.join(__dirname, './node_modules'),
-          path.join(__dirname, './node_modules/hslayers-ng')
-        ]
       },
       {
         test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
-        include: [path.resolve(__dirname), 
-          path.join(__dirname, './node_modules'),
-          path.join(__dirname, './node_modules/hslayers-ng')
-        ],
         use: [{
             loader: 'url-loader'
         }]
@@ -124,10 +116,6 @@ module.exports = merge(common, {
       // AngularJS templates are cached using cache template
       {
         test: /\.html$/,
-        include: [path.resolve(__dirname), 
-          path.join(__dirname, './node_modules'),
-          path.join(__dirname, './node_modules/hslayers-ng')
-        ],
         exclude: path.resolve(__dirname, 'src/index.html'),
         use: [
           'ng-cache-loader?prefix=[dir]/[dir]',
