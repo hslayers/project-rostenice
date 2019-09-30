@@ -150,7 +150,7 @@ angular.module('hs.weather', ['hs.core', 'hs.map'])
                         }
                     }
                     var lyr = new VectorLayer({
-                        title: "weather crossings",
+                        title: "Weather forecast locations",
                         source: src,
                         visible: true,
                         style: function (feature, resolution) {
