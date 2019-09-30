@@ -72,7 +72,7 @@ function getHostname() {
 };
 
 module.value('config', {
-    proxyPrefix: window.location.protocol + '//' + window.location.hostname + ":8085/",
+    proxyPrefix: '/proxy/',
     cesiumBase: './node_modules/cesium/Build/Cesium/',
     cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzZDk3ZmM0Mi01ZGFjLTRmYjQtYmFkNC02NTUwOTFhZjNlZjMiLCJpZCI6MTE2MSwiaWF0IjoxNTI3MTYxOTc5fQ.tOVBzBJjR3mwO3osvDVB_RwxyLX7W-emymTOkfz6yGA',
     newTerrainProviderOptions: {
