@@ -1,6 +1,6 @@
 'use strict';
 
-define(['angular', 'ol', 'sidebar', 'toolbar', 'layermanager', 'map', 'query', 'search', 'print', 'permalink', 'measure', 'legend', 'geolocation', 'core', 'api', 'angular-gettext', 'bootstrap', 'translations', 'compositions', 'status_creator', 'ows', 'feature_filter'],
+define(['angular', 'ol', 'sidebar', 'toolbar', 'layermanager', 'map', 'query', 'search', 'print', 'permalink', 'measure', 'legend', 'geolocation', 'core', 'api', 'angular-gettext', 'bootstrap', 'translations', 'compositions', 'status_creator', 'ows', 'feature_filter', 'csv_importer'],
 
     function (angular, ol, toolbar, layermanager) {
         var module = angular.module('hs', [
@@ -15,7 +15,8 @@ define(['angular', 'ol', 'sidebar', 'toolbar', 'layermanager', 'map', 'query', '
             'gettext',
             'hs.compositions', 'hs.status_creator',
             'hs.sidebar',
-            'hs.feature_filter'
+            'hs.feature_filter',
+            'hs.csv_importer'
         ]);
 
         module.directive('hs', ['hs.map.service', 'Core', function(OlMap, Core) {
@@ -34,6 +35,7 @@ define(['angular', 'ol', 'sidebar', 'toolbar', 'layermanager', 'map', 'query', '
             query: {
                 multi: true
             },
+            editable_layer: 1,
             default_layers: [
                 new ol.layer.Tile({
                     source: new ol.source.OSM({
