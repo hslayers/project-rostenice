@@ -12,7 +12,7 @@
     <% } %>
 </head>
 <body >
-    <div hs ng-app="hs" ng-controller="Main" style="position: relative;"></div>
+    <div hs ng-app="hs" ng-controller="Main" style="position: relative; height:100vh"></div>
     <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
       <script type="application/javascript" src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
     <% } %>

@@ -19,7 +19,7 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const hslPaths = require(path.join(__dirname, '../../hslayers-ng/common_paths'));
+const common_paths = require(path.join(__dirname, '../node_modules/hslayers-ng/common_paths'));
 
 module.exports = merge(common, {
   mode: 'production',
@@ -31,10 +31,10 @@ module.exports = merge(common, {
   resolve: {
     symlinks: false,
     modules: [
-      path.join(__dirname),
-      "node_modules",
-      "../../"
-    ].concat(hslPaths.paths)
+      __dirname,
+      path.join(__dirname, "../node_modules"),
+      path.join(__dirname, "../node_modules", "hslayers-ng")
+    ].concat(common_paths.paths)
   },
   plugins: [
     // Extract CSS into separated css files
@@ -85,8 +85,7 @@ module.exports = merge(common, {
             options: { publicPath: '' }
           },
           'css-loader'
-        ],
-        include: [path.resolve(__dirname), path.resolve(__dirname, '../../')]
+        ]
       },
       {
         test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
@@ -119,7 +118,6 @@ module.exports = merge(common, {
       // AngularJS templates are cached using cache template
       {
         test: /\.html$/,
-        include: [path.resolve(__dirname, 'src'), path.resolve(__dirname, '../../')],
         exclude: path.resolve(__dirname, 'src/index.html'),
         use: [
           'ng-cache-loader?prefix=[dir]/[dir]',
