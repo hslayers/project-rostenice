@@ -76,15 +76,15 @@ module.value('config', {
     cesiumBase: './node_modules/cesium/Build/Cesium/',
     cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzZDk3ZmM0Mi01ZGFjLTRmYjQtYmFkNC02NTUwOTFhZjNlZjMiLCJpZCI6MTE2MSwiaWF0IjoxNTI3MTYxOTc5fQ.tOVBzBJjR3mwO3osvDVB_RwxyLX7W-emymTOkfz6yGA',
     newTerrainProviderOptions: {
-        url: 'http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/'
+        url: '//gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/'
     },
     terrain_providers: [{
         title: 'Local surface model',
-        url: 'http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/',
+        url: '//gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/',
         active: true
     }, {
         title: 'Local terrain model',
-        url: 'http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmr5g/',
+        url: '//gis.lesprojekt.cz/cts/tilesets/rostenice_dmr5g/',
         active: false
     }, {
         title: 'EU-DEM',
