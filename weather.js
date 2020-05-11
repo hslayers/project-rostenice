@@ -1,5 +1,5 @@
-import map from 'map.module';
-import core from 'core';
+import 'hslayers-ng/components/map/map.module';
+import 'hslayers-ng/components/core/core.module';
 import VectorLayer from 'ol/layer/Vector';
 import { Vector } from 'ol/source';
 import { Style, Icon, Stroke, Fill, Circle } from 'ol/style';

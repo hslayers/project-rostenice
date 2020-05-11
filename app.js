@@ -32,12 +32,12 @@ var module = angular.module('hs', [
     'hs.weather'
 ]);
 
-module.directive('hs', ['hs.map.service', 'Core', '$compile', '$timeout', function (OlMap, Core, $compile, $timeout) {
+module.directive('hs', ['hs.map.service', 'Core', '$compile', '$timeout', 'hs.layout.service', function (OlMap, Core, $compile, $timeout, layoutService) {
     return {
         template: Core.hslayersNgTemplate,
         link: function (scope, element) {
             $timeout(function () {
-                Core.fullScreenMap(element);
+                layoutService.fullScreenMap(element, Core);
                 scope.createAboutDialog();
             }, 0);
         }
@@ -76,15 +76,15 @@ module.value('config', {
     cesiumBase: './node_modules/cesium/Build/Cesium/',
     cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzZDk3ZmM0Mi01ZGFjLTRmYjQtYmFkNC02NTUwOTFhZjNlZjMiLCJpZCI6MTE2MSwiaWF0IjoxNTI3MTYxOTc5fQ.tOVBzBJjR3mwO3osvDVB_RwxyLX7W-emymTOkfz6yGA',
     newTerrainProviderOptions: {
-        url: '//gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/'
+        url: '/proxy/http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/'
     },
     terrain_providers: [{
         title: 'Local surface model',
-        url: '//gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/',
+        url: '/proxy/http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/',
         active: true
     }, {
         title: 'Local terrain model',
-        url: '//gis.lesprojekt.cz/cts/tilesets/rostenice_dmr5g/',
+        url: '/proxy/http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmr5g/',
         active: false
     }, {
         title: 'EU-DEM',
@@ -222,23 +222,11 @@ module.value('config', {
     ],
     project_name: 'erra/map',
     datasources: [{
-        title: "Datasets",
-        url: "http://otn-dev.intrasoft-intl.com/otnServices-1.0/platform/ckanservices/datasets",
-        language: 'eng',
-        type: "ckan",
-        download: true
-    }, {
         title: "Services",
         url: "http://cat.ccss.cz/csw/",
         language: 'eng',
         type: "micka",
         code_list_url: 'http://www.whatstheplan.eu/php/metadata/util/codelists.php?_dc=1440156028103&language=eng&page=1&start=0&limit=25&filter=%5B%7B%22property%22%3A%22label%22%7D%5D'
-    }, {
-        title: "Hub layers",
-        url: "http://opentnet.eu/php/metadata/csw/",
-        language: 'eng',
-        type: "micka",
-        code_list_url: 'http://opentnet.eu/php/metadata/util/codelists.php?_dc=1440156028103&language=eng&page=1&start=0&limit=25&filter=%5B%7B%22property%22%3A%22label%22%7D%5D'
     }],
     hostname: {
         "default": {
@@ -250,6 +238,11 @@ module.value('config', {
     },
     'catalogue_url': "/php/metadata/csw",
     'compositions_catalogue_url': "/php/metadata/csw",
+    panelsEnabled: {
+        saveMap: false,
+        compositions: true
+    },
+    allowAddExternalDatasets: true,
     status_manager_url: '/wwwlibs/statusmanager2/index.php',
     default_view: new View({
         center: transform([16.8290202, 49.0751890], 'EPSG:4326', 'EPSG:3857'), //Latitude longitude    to Spherical Mercator
@@ -259,33 +252,27 @@ module.value('config', {
     cesiumdDebugShowFramesPerSecond: true
 });
 
-module.controller('Main', ['$scope', '$compile', '$element', 'Core', 'hs.map.service', 'config', 'hs.weather.service',
-    function ($scope, $compile, $element, Core, OlMap, config, weather_service) {
+module.controller('Main', ['$scope', '$compile', '$element', 'Core', 'hs.map.service', 'config', 'hs.weather.service', 'hs.sidebar.service', 'gettext', 'hs.layout.service',
+    function ($scope, $compile, $element, Core, OlMap, config, weather_service, sidebarService, gettext, layoutService) {
         $scope.Core = Core;
-
-        Core.singleDatasources = true;
-        Core.panelEnabled('compositions', true);
-        Core.panelEnabled('status_creator', false);
-
         config.default_layers.push(weather_service.createLayer());
-
+        $scope.panelVisible = layoutService.panelVisible;
+        
         $scope.$on('infopanel.updated', function (event) { });
 
         $scope.createAboutDialog = function () {
             var el = angular.element('<div hs.aboutproject></div>');
-            document.getElementById("hs-dialog-area").appendChild(el[0]);
+            layoutService.contentWrapper.querySelector(".hs-dialog-area").appendChild(el[0]);
             $compile(el)($scope);
         }
 
+        sidebarService.buttons.push({ panel: 'weather', module: 'hs.weather', order: 10, title: gettext('Weather watcher'), description: gettext('Get weather satellite crossings'), icon: 'icon-time' })
+        
         $scope.$on("scope_loaded", function (event, args) {
             if (args == 'Sidebar') {
-                var el = angular.element('<div hs.weather.directive hs.draggable ng-controller="hs.weather.controller" ng-if="Core.exists(\'hs.weather.controller\')" ng-show="Core.panelVisible(\'weather\', this)"></div>')[0];
-                document.querySelector('#panelplace').appendChild(el);
+                var el = angular.element('<div hs.weather.directive hs.draggable ng-controller="hs.weather.controller" ng-if="Core.exists(\'hs.weather.controller\')" ng-show="panelVisible(\'weather\', this)"></div>')[0];
+                layoutService.panelListElement.appendChild(el);
                 $compile(el)($scope);
-
-                var toolbar_button = angular.element('<div hs.weather.toolbar></div>')[0];
-                document.querySelector('.sidebar-list').appendChild(toolbar_button);
-                $compile(toolbar_button)(event.targetScope);
             }
         })
     }
