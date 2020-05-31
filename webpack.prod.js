@@ -23,7 +23,7 @@ const hslPaths = require(path.join( __dirname, './node_modules/hslayers-ng/commo
 
 module.exports = merge(common, {
   mode: 'production',
-  devtool: false,
+  devtool: 'source-map',
   output: {
     // Add a chunkhash to file name so it will not be cached by browsers when content changed
     filename: '[name].[chunkhash].bundle.js'
@@ -46,7 +46,6 @@ module.exports = merge(common, {
   ],
   optimization: {
     // See https://webpack.js.org/guides/caching
-    runtimeChunk: 'single',
     splitChunks: {
       cacheGroups: {
         // Bundle all initial chunks from node_modules into a "vendors" js file
@@ -61,6 +60,7 @@ module.exports = merge(common, {
       // JS minifier/uglifier
       new TerserPlugin({
         parallel: true,
+        sourceMap: true,
         // Remove comments as well
         terserOptions: { output: { comments: false } }
       }),
