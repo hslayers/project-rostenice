@@ -32,17 +32,18 @@ var module = angular.module('hs', [
     'hs.weather'
 ]);
 
-module.directive('hs', ['hs.map.service', 'Core', '$compile', '$timeout', 'hs.layout.service', function (OlMap, Core, $compile, $timeout, layoutService) {
+module.directive('hs', function (HsCore, $timeout, HsLayoutService) {
+    'ngInject';
     return {
-        template: Core.hslayersNgTemplate,
+        template: HsCore.hslayersNgTemplate,
         link: function (scope, element) {
             $timeout(function () {
-                layoutService.fullScreenMap(element, Core);
+                HsLayoutService.fullScreenMap(element, HsCore);
                 scope.createAboutDialog();
             }, 0);
         }
     };
-}]);
+});
 
 module.directive('hs.aboutproject', function () {
     function link(scope, element, attrs) {
@@ -71,7 +72,7 @@ function getHostname() {
     return urlArr[0] + "//" + domain;
 };
 
-module.value('config', {
+module.value('HsConfig', {
     proxyPrefix: '/proxy/',
     cesiumBase: './node_modules/cesium/Build/Cesium/',
     cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzZDk3ZmM0Mi01ZGFjLTRmYjQtYmFkNC02NTUwOTFhZjNlZjMiLCJpZCI6MTE2MSwiaWF0IjoxNTI3MTYxOTc5fQ.tOVBzBJjR3mwO3osvDVB_RwxyLX7W-emymTOkfz6yGA',
@@ -252,28 +253,29 @@ module.value('config', {
     cesiumdDebugShowFramesPerSecond: true
 });
 
-module.controller('Main', ['$scope', '$compile', '$element', 'Core', 'hs.map.service', 'config', 'hs.weather.service', 'hs.sidebar.service', 'gettext', 'hs.layout.service',
-    function ($scope, $compile, $element, Core, OlMap, config, weather_service, sidebarService, gettext, layoutService) {
-        $scope.Core = Core;
-        config.default_layers.push(weather_service.createLayer());
-        $scope.panelVisible = layoutService.panelVisible;
+module.controller('Main',
+    function ($scope, $compile, HsCore, HsConfig, HsWeatherService, HsSidebarService, gettext, HsLayoutService) {
+        'ngInject';
+        $scope.Core = HsCore;
+        HsConfig.default_layers.push(HsWeatherService.createLayer());
+        $scope.panelVisible = HsLayoutService.panelVisible;
         
         $scope.$on('infopanel.updated', function (event) { });
 
         $scope.createAboutDialog = function () {
             var el = angular.element('<div hs.aboutproject></div>');
-            layoutService.contentWrapper.querySelector(".hs-dialog-area").appendChild(el[0]);
+            HsLayoutService.contentWrapper.querySelector(".hs-dialog-area").appendChild(el[0]);
             $compile(el)($scope);
         }
 
-        sidebarService.buttons.push({ panel: 'weather', module: 'hs.weather', order: 10, title: gettext('Weather watcher'), description: gettext('Get weather satellite crossings'), icon: 'icon-time' })
+        HsSidebarService.buttons.push({ panel: 'weather', module: 'hs.weather', order: 10, title: gettext('Weather watcher'), description: gettext('Get weather satellite crossings'), icon: 'icon-time' })
         
         $scope.$on("scope_loaded", function (event, args) {
             if (args == 'Sidebar') {
                 var el = angular.element('<div hs.weather.directive hs.draggable ng-controller="hs.weather.controller" ng-if="Core.exists(\'hs.weather.controller\')" ng-show="panelVisible(\'weather\', this)"></div>')[0];
-                layoutService.panelListElement.appendChild(el);
+                HsLayoutService.panelListElement.appendChild(el);
                 $compile(el)($scope);
             }
         })
     }
-]);
+);

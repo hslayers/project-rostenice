@@ -22,8 +22,9 @@ angular.module('hs.weather', ['hs.core', 'hs.map'])
     })
 
 
-    .service("hs.weather.service", ['Core', 'hs.utils.service', '$rootScope',
-        function (Core, utils, $rootScope) {
+    .service("HsWeatherService",
+        function (HsUtilsService, $rootScope) {
+            'ngInject';
             var me = {
                 getCrossings: function (points, service, name, cb) {
                     for (var i = 0; i < points.length; i++) {
@@ -41,7 +42,7 @@ angular.module('hs.weather', ['hs.core', 'hs.map'])
                         var params = Object.keys(data).map(function (k) {
                             return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
                         }).join('&');
-                        var url = utils.proxify(`http://my.meteoblue.com/visimage/${service}?${params}`, false);
+                        var url = HsUtilsService.proxify(`http://my.meteoblue.com/visimage/${service}?${params}`, false);
                         var img = new Image();
                         img.onload = (function (point, ent) {
                             return function () {
@@ -171,44 +172,44 @@ angular.module('hs.weather', ['hs.core', 'hs.map'])
             };
             return me;
         }
-    ])
-    .controller('hs.weather.controller', ['$scope', 'hs.map.service', 'Core', 'config', 'hs.weather.service', '$timeout', '$compile', '$http',
-        function ($scope, OlMap, Core, config, service, $timeout, $compile, $http) {
-            service.points = [];
+    )
+    .controller('hs.weather.controller', 
+        function ($scope, HsMapService, HsWeatherService, $compile, $http) {
+            HsWeatherService.points = [];
             $scope.loading = false;
-            $scope.points = service.points;
-            $scope.service = service;
+            $scope.points = HsWeatherService.points;
+            $scope.service = HsWeatherService;
             $scope.$on('cesium_position_clicked', function (event, data) {
                 var point = {
                     lon: data[0].toFixed(2),
                     lat: data[1].toFixed(2),
-                    ix: service.points.length,
+                    ix: HsWeatherService.points.length,
                     forecasts: []
                 };
-                service.points.push(point);
+                HsWeatherService.points.push(point);
                 $http.get(`http://api.geonames.org/findNearbyPlaceNameJSON?lat=${point.lat}&lng=${point.lon}&username=raitis`).then(function (r) {
                     if (r.data.geonames.length > 0)
                         point.name = r.data.geonames[0].name
                 });
-                service.src.addFeatures([new Feature({
-                    geometry: new Point(transform([data[0], data[1]], 'EPSG:4326', OlMap.map.getView().getProjection().getCode())),
-                    ix: service.points.length - 1,
+                HsWeatherService.src.addFeatures([new Feature({
+                    geometry: new Point(transform([data[0], data[1]], 'EPSG:4326', HsMapService.map.getView().getProjection().getCode())),
+                    ix: HsWeatherService.points.length - 1,
                     image: './img/symbols/other.png'
                 })]);
-                service.src.dispatchEvent('features:loaded', service.src);
+                HsWeatherService.src.dispatchEvent('features:loaded', HsWeatherService.src);
             });
 
             $scope.getCrossings = function (serviceName, name) {
                 $scope.loading = true;
-                service.getCrossings(service.points, serviceName, name, function () {
+                HsWeatherService.getCrossings(HsWeatherService.points, serviceName, name, function () {
                     $scope.loading = false;
                 })
             };
 
             $scope.clear = function () {
-                service.points = [];
-                service.src.clear();
-                service.src.dispatchEvent('features:loaded', service.src);
+                HsWeatherService.points = [];
+                HsWeatherService.src.clear();
+                HsWeatherService.src.dispatchEvent('features:loaded', HsWeatherService.src);
             }
 
             $scope.showForecast = function (forecast) {
@@ -236,7 +237,7 @@ angular.module('hs.weather', ['hs.core', 'hs.map'])
             });
 
             $scope.$on('cesiummap.loaded', function (event, viewer, hsCesium) {
-                service.viewer = viewer;
+                HsWeatherService.viewer = viewer;
                 /*setInterval(function(){
                     var pos = Cesium.Cartographic.fromCartesian(viewer.camera.position);
                     var lastEnt = service.entities[service.entities.length-1];
@@ -247,12 +248,12 @@ angular.module('hs.weather', ['hs.core', 'hs.map'])
             });
 
             $scope.play = function () {
-                if(service.isPlaying)
-                    service.stopPlaying();
+                if(HsWeatherService.isPlaying)
+                    HsWeatherService.stopPlaying();
                 else
-                    service.playInterpolated();
+                    HsWeatherService.playInterpolated();
             }
 
             $scope.$emit('scope_loaded', "weather");
         }
-    ]);
+    );
