@@ -2,7 +2,7 @@
 import 'hslayers-ng/components/toolbar/toolbar.module';
 import 'hslayers-ng/components/query/query.module';
 import 'hslayers-ng/components/search/search.module';
-import 'hscesium.module';
+import 'hslayers-ng/components/hscesium/';
 import 'hslayers-ng/components/info/info.module';
 import 'hslayers-ng/components/datasource-selector/datasource-selector.module';
 import 'hslayers-ng/components/add-layers/add-layers.module';
@@ -11,7 +11,6 @@ import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
 import { ImageWMS, ImageArcGISRest } from 'ol/source';
 import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
-import 'cesium/Build/Cesium/Widgets/widgets.css';
 import weather from 'weather';
 import * as angular from 'angular';
 
@@ -274,3 +273,5 @@ module.controller('Main',
         })
     }
 );
+
+export default module;
