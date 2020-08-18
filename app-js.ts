@@ -74,20 +74,24 @@ function getHostname() {
     return urlArr[0] + "//" + domain;
 };
 
+const proxy = window.location.hostname.indexOf('ng.hslayers') == -1
+? `${window.location.protocol}//${window.location.hostname}:8085/`
+: '/proxy/';
+
 module.value('HsConfig', {
-    proxyPrefix: '/proxy/',
-    cesiumBase: './node_modules/cesium/Build/Cesium/',
+    proxyPrefix: proxy,
+    cesiumBase: './',
     cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzZDk3ZmM0Mi01ZGFjLTRmYjQtYmFkNC02NTUwOTFhZjNlZjMiLCJpZCI6MTE2MSwiaWF0IjoxNTI3MTYxOTc5fQ.tOVBzBJjR3mwO3osvDVB_RwxyLX7W-emymTOkfz6yGA',
     newTerrainProviderOptions: {
-        url: '/proxy/http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/'
+        url: proxy + 'http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/'
     },
     terrain_providers: [{
         title: 'Local surface model',
-        url: '/proxy/http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/',
+        url: proxy + 'http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/',
         active: true
     }, {
         title: 'Local terrain model',
-        url: '/proxy/http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmr5g/',
+        url: proxy + 'http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmr5g/',
         active: false
     }, {
         title: 'EU-DEM',

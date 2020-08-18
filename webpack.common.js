@@ -12,6 +12,9 @@
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const cesiumSource = 'node_modules/cesium/Source';
+const cesiumWorkers = '../Build/Cesium/Workers';
+const CopywebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: { app: 'main.ts' },
@@ -34,7 +37,11 @@ module.exports = {
       // We manually inject css and js files in our template
       inject: false
       // favicon: 'assets/img/favicon.ico'
-    })
+    }),
+    new CopywebpackPlugin({ patterns: [{ from: path.resolve(path.join(cesiumSource, cesiumWorkers)), to: 'Workers' }] }),
+    new CopywebpackPlugin({ patterns: [{ from: path.join(cesiumSource, 'Assets'), to: 'Assets' }] }),
+    new CopywebpackPlugin({ patterns: [{ from: path.join(cesiumSource, 'Widgets'), to: 'Widgets' }] }),
+    //new CopywebpackPlugin({ patterns: [{ from: 'assets', to: './' }] })
   ],
   module: {
     rules: [
