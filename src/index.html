@@ -19,8 +19,7 @@
     </style>
 </head>
 <body>
-    <div hs ng-app="hs" ng-controller="Main" style="position: relative; height:100vh"></div>
-    <script src="./node_modules/cesium/Build/Cesium/Cesium.js"></script>
+    <hs ng-controller="Main" style="position: relative;"></hs>
     <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
     <script type="application/javascript" src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
     <% } %>
