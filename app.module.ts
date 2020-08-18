@@ -9,8 +9,10 @@ import {BootstrapComponent} from 'hslayers-ng/bootstrap.component';
 import {BrowserModule} from '@angular/platform-browser';
 import {HsCoreModule} from 'hslayers-ng/components/core/core.module';
 import {UpgradeModule} from '@angular/upgrade/static';
+import { HsCesiumModule } from 'hslayers-ng/components/hscesium/hscesium.module';
+
 @NgModule({
-  imports: [BrowserModule, UpgradeModule, HsCoreModule],
+  imports: [BrowserModule, UpgradeModule, HsCoreModule, HsCesiumModule],
   declarations: [],
   entryComponents: [],
   providers: [
@@ -20,7 +22,7 @@ import {UpgradeModule} from '@angular/upgrade/static';
       useFactory: () => {
         return (component: ComponentRef<BootstrapComponent>) => {
           //When ng9 part is bootstrapped continue with AngularJs modules
-          component.instance.upgrade.bootstrap(
+          if(component.instance.upgrade) component.instance.upgrade.bootstrap(
             document.documentElement,
             [app.name],
             {strictDi: true}

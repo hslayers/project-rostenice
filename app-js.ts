@@ -3,6 +3,7 @@ import 'hslayers-ng/components/toolbar/toolbar.module';
 import 'hslayers-ng/components/query/query.module';
 import 'hslayers-ng/components/search/search.module';
 import 'hslayers-ng/components/hscesium/';
+import 'hslayers-ng/components/sidebar/';
 import 'hslayers-ng/components/info/info.module';
 import 'hslayers-ng/components/datasource-selector/datasource-selector.module';
 import 'hslayers-ng/components/add-layers/add-layers.module';
@@ -11,13 +12,21 @@ import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
 import { ImageWMS, ImageArcGISRest } from 'ol/source';
 import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
-import weather from 'weather';
+import './weather';
 import * as angular from 'angular';
 
+import {AppModule} from './app.module';
+import {downgrade} from 'hslayers-ng/common/downgrader';
+export const downgradedModule = downgrade(AppModule);
+
+angular.module(downgradedModule, []);
+
 var module = angular.module('hs', [
+    downgradedModule,
     'hs.toolbar',
     'hs.layermanager',
     'hs.query',
+    'hs.sidebar',
     'hs.search', 'hs.print', 'hs.permalink',
     'hs.datasource_selector',
     'hs.geolocation',
@@ -32,7 +41,6 @@ module.directive('hs', function (HsCore, $timeout, HsLayoutService) {
         template: HsCore.hslayersNgTemplate,
         link: function (scope, element) {
             $timeout(function () {
-                HsLayoutService.fullScreenMap(element, HsCore);
                 scope.createAboutDialog();
             }, 0);
         }
