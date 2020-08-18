@@ -10,7 +10,6 @@
 const merge = require('webpack-merge');
 const common = require('./webpack.common');
 const path = require('path');
-const common_paths = require(path.join(__dirname, '../node_modules/hslayers-ng/common_paths'));
 
 module.exports = merge(common, {
   mode: 'development',
@@ -21,7 +20,7 @@ module.exports = merge(common, {
       __dirname,
       path.join(__dirname, "../node_modules"),
       path.join(__dirname, "../node_modules", "hslayers-ng")
-    ].concat(common_paths.paths)
+    ]
   },
   optimization: {
     // see https://webpack.js.org/guides/build-performance#avoid-extra-optimization-steps

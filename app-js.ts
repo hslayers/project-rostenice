@@ -1,16 +1,11 @@
 'use strict';
-import toolbar from 'toolbar.module';
-import print from 'print.module';
-import query from 'query.module';
-import search from 'search.module';
-import measure from 'measure.module';
-import permalink from 'permalink.module';
+import 'hslayers-ng/components/toolbar/toolbar.module';
+import 'hslayers-ng/components/query/query.module';
+import 'hslayers-ng/components/search/search.module';
 import 'hscesium.module';
-import info from 'info.module';
-import ds from 'datasource-selector.module';
-import sidebar from 'sidebar.module';
-import 'add-layers.module';
-import bootstrapBundle from 'bootstrap/dist/js/bootstrap.bundle';
+import 'hslayers-ng/components/info/info.module';
+import 'hslayers-ng/components/datasource-selector/datasource-selector.module';
+import 'hslayers-ng/components/add-layers/add-layers.module';
 import { Tile, Group } from 'ol/layer';
 import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
 import { ImageWMS, ImageArcGISRest } from 'ol/source';
@@ -18,6 +13,7 @@ import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 import weather from 'weather';
+import * as angular from 'angular';
 
 var module = angular.module('hs', [
     'hs.toolbar',
@@ -27,7 +23,6 @@ var module = angular.module('hs', [
     'hs.datasource_selector',
     'hs.geolocation',
     'hs.cesium',
-    'hs.sidebar',
     'hs.addLayers',
     'hs.weather'
 ]);

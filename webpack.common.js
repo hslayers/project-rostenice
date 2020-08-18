@@ -14,7 +14,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: { app: 'app.js' },
+  entry: { app: 'main.ts' },
   output: {
     // Path where bundled files will be output
     path: path.resolve(__dirname, 'static'),
@@ -22,7 +22,7 @@ module.exports = {
     publicPath: 'static/'
   },
   // Just for build speed improvement
-  resolve: { symlinks: false},
+  resolve: {  extensions: ['.tsx', '.ts', '.js'], symlinks: false},
   plugins: [
     // Clean before build
     new CleanWebpackPlugin(),
@@ -38,6 +38,16 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /\.ts$/,
+        use: [
+          {loader: 'ng-annotate-loader', options: {
+            ngAnnotate: 'ng-annotate-patched',
+          }},
+          {loader: 'ts-loader', options: {allowTsInNodeModules: true}},
+        ],
+        exclude: /node_modules\/(?!(hslayers-ng)\/).*/,
+      },
       // Automatically generates $inject array for angularJS components annotated with:
       // 'ngInject';
       // or commented with /**@ngInject */
@@ -50,11 +60,14 @@ module.exports = {
             options: {
               // Babel syntax dynamic import plugin allow babel to correctly parse js files
               // using webpack dynamic import expression (i.e import('angular').then(...))
-              plugins: ['angularjs-annotate', '@babel/plugin-syntax-dynamic-import']
-            }
-          }
-        ]
-      }
+              plugins: [
+                'angularjs-annotate',
+                '@babel/plugin-syntax-dynamic-import',
+              ],
+            },
+          },
+        ],
+      },
     ]
   }
 };
