@@ -1,4 +1,4 @@
-<div class="card card- mainpanel">
+<div [hidden]="!isVisible()" class="card card- mainpanel">
     <div class="card-header" i18n>Weather watcher
         <button type="button" class="close" (click)="Core.closePanel(this)">
             <span aria-hidden="true"></span>

@@ -9,6 +9,7 @@ import { transform } from 'ol/proj';
 import { Feature } from 'ol';
 import { HsDialogContainerService } from 'hslayers-ng/components/layout/dialogs/dialog-container.service';
 import { InfoDialogComponent } from './info-dialog.component';
+import {HsLayoutService} from 'hslayers-ng/components/layout/layout.service';
 import { HsCesiumService } from 'hslayers-ng/components/hscesium/hscesium.service';
 import {HttpClient} from '@angular/common/http';
 
@@ -29,6 +30,7 @@ export class WeatherComponent
         private HsDialogContainerService: HsDialogContainerService,
         private HsCesiumService: HsCesiumService,
         private HttpClient: HttpClient,
+        private HsLayoutService: HsLayoutService,
         HsConfig: HsConfig
     ) {
         HsConfig.default_layers.push(WeatherService.createLayer());
@@ -57,6 +59,10 @@ export class WeatherComponent
             })]);
             this.WeatherService.src.dispatchEvent('features:loaded', this.WeatherService.src);
         });
+    }
+
+    isVisible() {
+        return this.HsLayoutService.panelVisible('weather');
     }
 
     getCrossings(serviceName, name) {
