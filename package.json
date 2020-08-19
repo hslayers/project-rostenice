@@ -7,9 +7,10 @@
   "license": "MIT",
   "scripts": {
     "proxy": "node node_modules/hslayers-ng/lib/proxy.js",
-    "run": "node node_modules/http-server/bin/http-server",
+    "run": "node_modules/http-server/bin/http-server",
     "postinstall": "",
     "prestart": "npm install",
+    "serve": "./node_modules/.bin/webpack-dev-server --config webpack.dev.js --progress",
     "start": "http-server -a localhost -p 8000",
     "pretest": "npm install",
     "test": "karma start test/karma.conf.js",
@@ -56,6 +57,7 @@
     "webpack": "^4.43.0",
     "webpack-build-notifier": "^1.2.2",
     "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^4.2.2"
   }
 }
