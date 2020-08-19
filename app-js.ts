@@ -12,14 +12,16 @@ import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
 import { ImageWMS, ImageArcGISRest } from 'ol/source';
 import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
-import './weather';
 import * as angular from 'angular';
 
 import {AppModule} from './app.module';
 import {downgrade} from 'hslayers-ng/common/downgrader';
+import {downgradeInjectable} from '@angular/upgrade/static';
+import { MainService } from './main.service';
 export const downgradedModule = downgrade(AppModule);
 
-angular.module(downgradedModule, []);
+angular.module(downgradedModule, [])
+.service('MainService', downgradeInjectable(MainService));
 
 var module = angular.module('hs', [
     downgradedModule,
@@ -31,8 +33,7 @@ var module = angular.module('hs', [
     'hs.datasource_selector',
     'hs.geolocation',
     'hs.cesium',
-    'hs.addLayers',
-    'hs.weather'
+    'hs.addLayers'
 ]);
 
 module.directive('hs', function (HsCore, $timeout, HsLayoutService) {
@@ -260,10 +261,9 @@ module.value('HsConfig', {
 });
 
 module.controller('Main',
-    function ($scope, $compile, HsCore, HsConfig, HsWeatherService, HsSidebarService, gettext, HsLayoutService) {
+    function ($scope, $compile, HsCore, HsLayoutService, MainService) {
         'ngInject';
         $scope.Core = HsCore;
-        HsConfig.default_layers.push(HsWeatherService.createLayer());
         $scope.panelVisible = HsLayoutService.panelVisible;
         
         $scope.$on('infopanel.updated', function (event) { });
@@ -274,15 +274,8 @@ module.controller('Main',
             $compile(el)($scope);
         }
 
-        HsSidebarService.buttons.push({ panel: 'weather', module: 'hs.weather', order: 10, title: gettext('Weather watcher'), description: gettext('Get weather satellite crossings'), icon: 'icon-time' })
+        MainService.init();
         
-        $scope.$on("scope_loaded", function (event, args) {
-            if (args == 'Sidebar') {
-                var el = angular.element('<div hs.weather.directive hs.draggable ng-controller="hs.weather.controller" ng-if="Core.exists(\'hs.weather.controller\')" ng-show="panelVisible(\'weather\', this)"></div>')[0];
-                HsLayoutService.panelListElement.appendChild(el);
-                $compile(el)($scope);
-            }
-        })
     }
 );
 
