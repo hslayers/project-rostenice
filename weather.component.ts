@@ -1,5 +1,4 @@
 import { Component, Input, ViewRef } from '@angular/core';
-import { HsPanelComponent } from 'hslayers-ng/components/layout/panels/panel-component';
 import { HsPanelContainerService } from 'hslayers-ng/components/layout/panels/panel-container.service';
 import { WeatherService } from './weather.service';
 import { HsConfig } from 'hslayers-ng/config.service';
@@ -12,6 +11,7 @@ import { InfoDialogComponent } from './info-dialog.component';
 import {HsLayoutService} from 'hslayers-ng/components/layout/layout.service';
 import { HsCesiumService } from 'hslayers-ng/components/hscesium/hscesium.service';
 import {HttpClient} from '@angular/common/http';
+import {HsPanelComponent} from 'hslayers-ng/components/layout/panels/panel-component.interface';
 
 @Component({
     selector: 'weather',

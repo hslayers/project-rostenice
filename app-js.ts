@@ -1,12 +1,6 @@
 'use strict';
-import 'hslayers-ng/components/toolbar/toolbar.module';
-import 'hslayers-ng/components/query/query.module';
-import 'hslayers-ng/components/search/search.module';
+import 'hslayers-ng/components/core/';
 import 'hslayers-ng/components/hscesium/';
-import 'hslayers-ng/components/sidebar/';
-import 'hslayers-ng/components/info/info.module';
-import 'hslayers-ng/components/datasource-selector/datasource-selector.module';
-import 'hslayers-ng/components/add-layers/add-layers.module';
 import { Tile, Group } from 'ol/layer';
 import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
 import { ImageWMS, ImageArcGISRest } from 'ol/source';
@@ -25,15 +19,8 @@ angular.module(downgradedModule, [])
 
 var module = angular.module('hs', [
     downgradedModule,
-    'hs.toolbar',
-    'hs.layermanager',
-    'hs.query',
-    'hs.sidebar',
-    'hs.search', 'hs.print', 'hs.permalink',
-    'hs.datasource_selector',
-    'hs.geolocation',
-    'hs.cesium',
-    'hs.addLayers'
+    'hs.core',
+    'hs.cesium'
 ]);
 
 module.directive('hs', function (HsCore, $timeout, HsLayoutService) {
