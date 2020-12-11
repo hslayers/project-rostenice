@@ -3,6 +3,8 @@
         "experimentalDecorators": true,
         "allowJs": false,
         "target": "es5",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
         "emitDecoratorMetadata": true,
         "lib": ["esnext", "dom"],
         "sourceMap": true

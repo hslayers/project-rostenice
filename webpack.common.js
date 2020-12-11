@@ -15,6 +15,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const cesiumSource = 'node_modules/cesium/Source';
 const cesiumWorkers = '../Build/Cesium/Workers';
 const CopywebpackPlugin = require('copy-webpack-plugin');
+const fs = require('fs');
 
 module.exports = {
   entry: { app: 'main.ts' },
@@ -45,6 +46,21 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /\.scss$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              additionalData: fs.existsSync('./hsl-custom.scss')
+                ? `@use "hsl-custom.scss" as *;`
+                : '',
+            },
+          },
+        ],
+      },
       {
         test: /\.ts$/,
         use: [
