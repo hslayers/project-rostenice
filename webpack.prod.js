@@ -19,7 +19,6 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const hslPaths = require(path.join( __dirname, './node_modules/hslayers-ng/common_paths'));
 
 module.exports = merge(common, {
   mode: 'production',
@@ -33,7 +32,7 @@ module.exports = merge(common, {
       __dirname,
       path.join(__dirname, "./node_modules"),
       path.join(__dirname, "./node_modules", "hslayers-ng")
-    ].concat(hslPaths.paths)
+    ]
   },
   plugins: [
     // Extract CSS into separated css files
