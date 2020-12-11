@@ -10,6 +10,7 @@
     "run": "node_modules/http-server/bin/http-server",
     "postinstall": "",
     "prestart": "npm install",
+    "build": "./node_modules/.bin/webpack --config webpack.prod.js --progress",
     "serve": "./node_modules/.bin/webpack-dev-server --config webpack.dev.js --progress",
     "start": "http-server -a localhost -p 8000",
     "pretest": "npm install",
