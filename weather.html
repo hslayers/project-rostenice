@@ -1,0 +1,42 @@
+<div [hidden]="!isVisible()" class="card card- mainpanel">
+    <div class="card-header" i18n>Weather watcher
+        <button type="button" class="close" (click)="Core.closePanel(this)">
+            <span aria-hidden="true"></span>
+            <span class="sr-only" i18n>Close</span>
+        </button>
+    </div>
+    <style>weather-table>tbody>tr>td, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>td, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>thead>tr>th {
+    padding: 2px;
+}
+    </style>
+    <div class="card-body">
+        <div class="card-body">
+             <span [hidden]="!(WeatherService.points.length == 0)" i18n>Click on the map to put markers and then choose weather forecast from the list</span>
+                    <ul class="hs-senslog-list list-group">
+                                <li *ngFor="let point of WeatherService.points" class="list-group-item">
+                                        <div class="" style="font-size: 10pt;">#{{point.ix}} near {{point.name}} <span i18n>at</span> {{point.lat}}°N {{point.lon}}°E 
+                        <table class="table table-condensed weather-table" style="font-size: 8pt;">
+                            <tbody><tr><th i18n>Name</th><th i18n>Updated</th><th></th></tr>
+                            <tr *ngFor="let forecast of point.forecasts"><td>{{forecast.name}}</td><td>{{forecast.updated}}</td><td><a href="" (click)="showForecast(forecast)">Open</a></td></tr>
+                        </tbody></table>
+                                        </div>
+                </li>
+                <div class="dropdown">
+                    <button class="btn btn-primary btn-block dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img [hidden]="!loading" src="img/ajax-loader.gif" i18n><i18n>Get forecast</i18n>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="" (click)="getCrossings('meteogram_agro_hd', '7 day agro meteogram')">7 day agro meteogram</a>
+                      <a class="dropdown-item" href="" (click)="getCrossings('meteogram_14day', '14 day agro meteogram')">14 day agro meteogram</a>
+                      <a class="dropdown-item" href="" (click)="getCrossings('pictoprintDayUvRain', 'Forecast pictograms')">Forecast pictograms</a>
+                      <a class="dropdown-item" href="" (click)="getCrossings('meteogram_soiltraffic', 'Soil trafficability')">Soil trafficability</a>
+                      <a class="dropdown-item" href="" (click)="getCrossings('meteogram_agroSowing', 'Spray window')">Sow conditions</a>
+                      <a class="dropdown-item" href="" (click)="getCrossings('meteogram_agroSpraying', 'Spray window')">Spray window</a>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-block" i18n (click)="play()">{{WeatherService.isPlaying ? 'Stop animation' : 'Play animation'}}</button>
+                <button class="btn btn-danger btn-block" i18n (click)="clear()"> Clear</button>
+                    </ul>
+        </div>
+    </div>
+</div>

@@ -12,32 +12,65 @@
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const cesiumSource = 'node_modules/cesium/Source';
+const cesiumWorkers = '../Build/Cesium/Workers';
+const CopywebpackPlugin = require('copy-webpack-plugin');
+const fs = require('fs');
 
 module.exports = {
-  entry: { app: 'app.js' },
+  entry: { app: 'main.ts' },
   output: {
     // Path where bundled files will be output
     path: path.resolve(__dirname, 'static'),
     // Path at which output assets will be served
-    publicPath: 'static/'
+    publicPath: ''
   },
   // Just for build speed improvement
-  resolve: { symlinks: false},
+  resolve: {  extensions: ['.tsx', '.ts', '.js'], symlinks: false},
   plugins: [
     // Clean before build
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       // Path where the file will be generated (appended to output.path)
-      filename: '../index.html',
+      filename: 'index.html',
       // index.html template file location
       template: 'src/index.html',
       // We manually inject css and js files in our template
       inject: false
       // favicon: 'assets/img/favicon.ico'
-    })
+    }),
+    new CopywebpackPlugin({ patterns: [{ from: path.resolve(path.join(cesiumSource, cesiumWorkers)), to: 'Workers' }] }),
+    new CopywebpackPlugin({ patterns: [{ from: path.join(cesiumSource, 'Assets'), to: 'Assets' }] }),
+    new CopywebpackPlugin({ patterns: [{ from: path.join(cesiumSource, 'Widgets'), to: 'Widgets' }] }),
+    //new CopywebpackPlugin({ patterns: [{ from: 'assets', to: './' }] })
   ],
   module: {
     rules: [
+      {
+        test: /\.scss$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              additionalData: fs.existsSync('./hsl-custom.scss')
+                ? `@use "hsl-custom.scss" as *;`
+                : '',
+            },
+          },
+        ],
+      },
+      {
+        test: /\.ts$/,
+        use: [
+          {loader: 'ng-annotate-loader', options: {
+            ngAnnotate: 'ng-annotate-patched',
+          }},
+          {loader: 'ts-loader', options: {allowTsInNodeModules: true}},
+        ],
+        exclude: /node_modules\/(?!(hslayers-ng)\/).*/,
+      },
       // Automatically generates $inject array for angularJS components annotated with:
       // 'ngInject';
       // or commented with /**@ngInject */
@@ -50,11 +83,14 @@ module.exports = {
             options: {
               // Babel syntax dynamic import plugin allow babel to correctly parse js files
               // using webpack dynamic import expression (i.e import('angular').then(...))
-              plugins: ['angularjs-annotate', '@babel/plugin-syntax-dynamic-import']
-            }
-          }
-        ]
-      }
+              plugins: [
+                'angularjs-annotate',
+                '@babel/plugin-syntax-dynamic-import',
+              ],
+            },
+          },
+        ],
+      },
     ]
   }
 };

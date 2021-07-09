@@ -1,35 +1,26 @@
 'use strict';
-import toolbar from 'toolbar.module';
-import print from 'print.module';
-import query from 'query.module';
-import search from 'search.module';
-import measure from 'measure.module';
-import permalink from 'permalink.module';
-import 'hscesium.module';
-import info from 'info.module';
-import ds from 'datasource-selector.module';
-import sidebar from 'sidebar.module';
-import 'add-layers.module';
-import bootstrapBundle from 'bootstrap/dist/js/bootstrap.bundle';
+import 'hslayers-ng/components/core/';
+import 'hslayers-ng/components/hscesium/';
 import { Tile, Group } from 'ol/layer';
 import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
 import { ImageWMS, ImageArcGISRest } from 'ol/source';
 import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
-import 'cesium/Build/Cesium/Widgets/widgets.css';
-import weather from 'weather';
+import * as angular from 'angular';
+
+import {AppModule} from './app.module';
+import {downgrade} from 'hslayers-ng/common/downgrader';
+import {downgradeInjectable} from '@angular/upgrade/static';
+import { MainService } from './main.service';
+export const downgradedModule = downgrade(AppModule);
+
+angular.module(downgradedModule, [])
+.service('MainService', downgradeInjectable(MainService));
 
 var module = angular.module('hs', [
-    'hs.toolbar',
-    'hs.layermanager',
-    'hs.query',
-    'hs.search', 'hs.print', 'hs.permalink',
-    'hs.datasource_selector',
-    'hs.geolocation',
-    'hs.cesium',
-    'hs.sidebar',
-    'hs.addLayers',
-    'hs.weather'
+    downgradedModule,
+    'hs.core',
+    'hs.cesium'
 ]);
 
 module.directive('hs', function (HsCore, $timeout, HsLayoutService) {
@@ -38,7 +29,6 @@ module.directive('hs', function (HsCore, $timeout, HsLayoutService) {
         template: HsCore.hslayersNgTemplate,
         link: function (scope, element) {
             $timeout(function () {
-                HsLayoutService.fullScreenMap(element, HsCore);
                 scope.createAboutDialog();
             }, 0);
         }
@@ -72,20 +62,24 @@ function getHostname() {
     return urlArr[0] + "//" + domain;
 };
 
+const proxy = window.location.hostname.indexOf('ng.hslayers') == -1
+? `${window.location.protocol}//${window.location.hostname}:8085/`
+: '/proxy/';
+
 module.value('HsConfig', {
-    proxyPrefix: '/proxy/',
-    cesiumBase: './node_modules/cesium/Build/Cesium/',
+    proxyPrefix: proxy,
+    cesiumBase: './',
     cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzZDk3ZmM0Mi01ZGFjLTRmYjQtYmFkNC02NTUwOTFhZjNlZjMiLCJpZCI6MTE2MSwiaWF0IjoxNTI3MTYxOTc5fQ.tOVBzBJjR3mwO3osvDVB_RwxyLX7W-emymTOkfz6yGA',
     newTerrainProviderOptions: {
-        url: '/proxy/http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/'
+        url: proxy + 'http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/'
     },
     terrain_providers: [{
         title: 'Local surface model',
-        url: '/proxy/http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/',
+        url: proxy + 'http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmp1g/',
         active: true
     }, {
         title: 'Local terrain model',
-        url: '/proxy/http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmr5g/',
+        url: proxy + 'http://gis.lesprojekt.cz/cts/tilesets/rostenice_dmr5g/',
         active: false
     }, {
         title: 'EU-DEM',
@@ -254,10 +248,9 @@ module.value('HsConfig', {
 });
 
 module.controller('Main',
-    function ($scope, $compile, HsCore, HsConfig, HsWeatherService, HsSidebarService, gettext, HsLayoutService) {
+    function ($scope, $compile, HsCore, HsLayoutService, MainService) {
         'ngInject';
         $scope.Core = HsCore;
-        HsConfig.default_layers.push(HsWeatherService.createLayer());
         $scope.panelVisible = HsLayoutService.panelVisible;
         
         $scope.$on('infopanel.updated', function (event) { });
@@ -268,14 +261,9 @@ module.controller('Main',
             $compile(el)($scope);
         }
 
-        HsSidebarService.buttons.push({ panel: 'weather', module: 'hs.weather', order: 10, title: gettext('Weather watcher'), description: gettext('Get weather satellite crossings'), icon: 'icon-time' })
+        MainService.init();
         
-        $scope.$on("scope_loaded", function (event, args) {
-            if (args == 'Sidebar') {
-                var el = angular.element('<div hs.weather.directive hs.draggable ng-controller="hs.weather.controller" ng-if="Core.exists(\'hs.weather.controller\')" ng-show="panelVisible(\'weather\', this)"></div>')[0];
-                HsLayoutService.panelListElement.appendChild(el);
-                $compile(el)($scope);
-            }
-        })
     }
 );
+
+export default module;

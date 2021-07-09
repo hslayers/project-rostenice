@@ -1,17 +1,17 @@
-<div class="modal" id="info-dialog"  ng-class="{'in': infoModalVisible}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="info-dialog" [ngClass]="{'in': infoModalVisible}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h4>
                     <translate>{{name}}</translate>
                 </h4>
-                <button type="button" class="close" ng-click="infoModalVisible = false" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="close" (click)="infoModalVisible = false" data-dismiss="modal">
+                    <span aria-hidden="true"></span>
                     <span class="sr-only" translate="">Close</span>
                 </button>
             </div>
             <div class="modal-body">
-               <img ng-src="{{image}}" style="max-width: 1105px;" />
+               <img src="{{image}}" style="max-width: 1105px;">
             </div>
         </div>
     </div>
